@@ -53,17 +53,17 @@ export default function Home() {
     setLoading(true);
     
     try {
-      const response = await fetch('/api/unavailable-ports', {
+      const formData = new FormData();
+      formData.append('subdomain', subdomain);
+      formData.append('port', port);
+      
+      const response = await fetch('http://localhost:5000/addSubdomain', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ subdomain, port: parseInt(port) }),
+        body: formData,
       });
       
-      const result = await response.json();
-      
-      if (result.success) {
+      // Since your Flask app doesn't return JSON, check if request was successful
+      if (response.ok) {
         showMessage('success', 'Nginx configuration created successfully!');
         // Reset form after successful submission
         setSubdomain("");
@@ -71,7 +71,7 @@ export default function Home() {
         // Refresh the unavailable ports list
         await fetchUnavailablePorts();
       } else {
-        showMessage('error', result.message || result.error);
+        showMessage('error', 'Failed to create configuration');
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -93,12 +93,6 @@ export default function Home() {
             unavailablePorts.map((item, index) => (
               <div key={index} className={styles.portItem}>
                 <span className={styles.portNumber}>{item.port}</span>
-                <div className={styles.portInfo}>
-                  <span className={styles.serviceName}>{item.service}</span>
-                  {item.description && (
-                    <span className={styles.serviceDescription}>{item.description}</span>
-                  )}
-                </div>
               </div>
             ))
           ) : (
@@ -127,6 +121,7 @@ export default function Home() {
               </label>
               <input
                 id="subdomain"
+                name="subdomain"
                 type="text"
                 value={subdomain}
                 onChange={(e) => setSubdomain(e.target.value)}
@@ -135,13 +130,13 @@ export default function Home() {
                 required
               />
             </div>
-
             <div className={styles.inputGroup}>
               <label htmlFor="port" className={styles.label}>
                 Target Port
               </label>
               <input
                 id="port"
+                name="port"
                 type="number"
                 value={port}
                 onChange={(e) => setPort(e.target.value)}
