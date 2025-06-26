@@ -1,6 +1,7 @@
 import os
 import time
 import threading
+import re
 
 def configureSitesAvailable(subdomain, port):
     current_dir = os.getcwd()
@@ -58,5 +59,23 @@ def configureNginx(subdomain, port):
     thread1.join()
     thread2.join()
 
+def getPortsinUse():
+    current_dir = os.getcwd()
+    while(current_dir != '/'):
+        os.chdir("..")
+        current_dir = os.getcwd()
+    with open("etc/nginx/sites-enabled/default", "r") as f:
+        file_content = f.readlines()        
+    allnums = []
+    for line in file_content:
+        if('listen' in line):
+            print(line)
+            numbers = re.findall(r'\d+', line)
+            print(numbers)  # ['12', '34']
+            numbers = [int(num) for num in numbers]
+            print(numbers)  # [12, 34]
+            for num in numbers:
+                allnums.append(num)
+    return allnums
 if __name__ == "__main__":
-    configureSitesEnabled("ndajndsajnds", "69")
+    getPortsinUse()
