@@ -14,24 +14,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-used_ports = []
+
 
 @app.post("/addSubdomain")
 async def add_subdomain(subdomain: str = Form(...), port: str = Form(...)):
     try:
         print(f"Received subdomain: {subdomain}")
         print(f"Received port: {port}")
-        if(port in used_ports):
+        used_ports = getPortsinUse()
+        print("Used ports: ", used_ports)
+        if(int(port) in used_ports):
+            print("False being returned")
             return {
                 "success": False,
                 "message": f"Port {port} is already in use. Please choose a different port."
             }
-        configureNginx(subdomain, port)
+        else:
+            #configureNginx(subdomain, port)        
+            return {
+                "success": True,
+                "message": "Configuration created successfully"
+            }
+            
         
-        return {
-            "success": True,
-            "message": "Configuration created successfully"
-        }
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -39,7 +44,7 @@ async def add_subdomain(subdomain: str = Form(...), port: str = Form(...)):
 @app.get("/getPortsinUse")
 async def get_ports():
     try:
-        used_ports = [69, 420]#getPortsinUse()
+        used_ports = getPortsinUse()#[69, 420]
         
         # Convert numbers to objects with port property
         formatted_ports = [{"port": port} for port in used_ports]

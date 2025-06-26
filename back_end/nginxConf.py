@@ -69,11 +69,8 @@ def getPortsinUse():
     allnums = []
     for line in file_content:
         if('listen' in line):
-            print(line)
             numbers = re.findall(r'\d+', line)
-            print(numbers)  # ['12', '34']
             numbers = [int(num) for num in numbers]
-            print(numbers)  # [12, 34]
             for num in numbers:
                 allnums.append(num)
     return allnums
