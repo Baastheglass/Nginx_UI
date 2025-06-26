@@ -46,7 +46,8 @@ export default function Home() {
         method: 'POST',
         body: formData,
       });
-      
+      const result = await response.json()
+      console.log(result)
       // Since your Flask app doesn't return JSON, check if request was successful
       if (response.ok) {
         showMessage('success', 'Nginx configuration created successfully!');
