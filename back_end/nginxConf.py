@@ -47,17 +47,6 @@ def configureSitesEnabled(subdomain, port):
     with open("etc/nginx/sites-enabled/default", "a") as f:
         f.write(server_configuration_string)        
 
-def configureNginx(subdomain, port):
-    thread1 = threading.Thread(target=configureSitesEnabled, args=(subdomain, port))
-    thread2 = threading.Thread(target=configureSitesAvailable, args=(subdomain, port))
-
-    # Start threads
-    thread1.start()
-    thread2.start()
-
-    # Wait for both to finish
-    thread1.join()
-    thread2.join()
 
 def getPortsinUse():
     current_dir = os.getcwd()
@@ -68,11 +57,14 @@ def getPortsinUse():
         file_content = f.readlines()        
     allnums = []
     for line in file_content:
-        if('listen' in line):
-            numbers = re.findall(r'\d+', line)
-            numbers = [int(num) for num in numbers]
-            for num in numbers:
-                allnums.append(num)
+        if('proxy_pass' in line):
+            match = re.search(r':([^:;]+);', line)
+            allnums.append(match.group(1))
+            # numbers = re.findall(r'\d+', line)
+            # numbers = [int(num) for num in numbers]
+            # for num in numbers:
+            #     allnums.append(num)
+    allnums = list(set(allnums))
     return allnums
 if __name__ == "__main__":
     getPortsinUse()

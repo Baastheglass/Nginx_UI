@@ -26,54 +26,39 @@ export default function Home() {
       if (result.success) {
         console.log("Unavailable ports data:", result.data);
         setUnavailablePorts(result.data);
-      } else {
-        console.error("Failed to fetch ports:", result.error);
-        // Fallback to mock data
-        const mockPorts = [
-          { port: 80, service: "HTTP" },
-          { port: 443, service: "HTTPS" },
-          { port: 3000, service: "Development Server" }
-        ];
-        setUnavailablePorts(mockPorts);
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Error fetching unavailable ports:", error);
-      // Fallback to mock data on network error
-      const mockPorts = [
-        { port: 80, service: "HTTP" },
-        { port: 443, service: "HTTPS" },
-        { port: 3000, service: "Development Server" }
-      ];
-      setUnavailablePorts(mockPorts);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       const formData = new FormData();
       formData.append('subdomain', subdomain);
       formData.append('port', port);
-
-      const response = await fetch('https://nginxui.axonbuild.com/addSubdomain', {
+      
+      const response = await fetch('http://localhost:5000/addSubdomain', {
         method: 'POST',
         body: formData,
       });
       
-      const result = await response.json();
-      console.log(result);
       // Since your Flask app doesn't return JSON, check if request was successful
-      if (response) {
+      if (response.ok) {
         showMessage('success', 'Nginx configuration created successfully!');
         // Reset form after successful submission
         setSubdomain("");
         setPort("");
         // Refresh the unavailable ports list
         await fetchUnavailablePorts();
-      } else {
-        showMessage('error', 'Failed to create configuration');
+      } else if (result.success == false){
+        showMessage('error', result.message);
+        setSubdomain("");
+        setPort("");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -108,13 +93,13 @@ export default function Home() {
           <h1>Nginx UI Manager</h1>
           <p className={styles.subtitle}>Configure your nginx reverse proxy settings</p>
         </div>
-        
+
         {message.text && (
           <div className={`${styles.message} ${styles[message.type]}`}>
             {message.text}
           </div>
         )}
-        
+
         <div className={styles.formContainer}>
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.inputGroup}>
@@ -150,8 +135,8 @@ export default function Home() {
               />
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className={styles.submitButton}
               disabled={loading}
             >
