@@ -24,13 +24,12 @@ async def add_subdomain(subdomain: str = Form(...), port: str = Form(...)):
         used_ports = getPortsinUse()
         print("Used ports: ", used_ports)
         if(int(port) in used_ports):
-            print("False being returned")
             return {
                 "success": False,
                 "message": f"Port {port} is already in use. Please choose a different port."
             }
         else:
-            #configureNginx(subdomain, port)        
+            configureNginx(subdomain, port)        
             return {
                 "success": True,
                 "message": "Configuration created successfully"

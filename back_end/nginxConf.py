@@ -68,11 +68,14 @@ def getPortsinUse():
         file_content = f.readlines()        
     allnums = []
     for line in file_content:
-        if('listen' in line):
-            numbers = re.findall(r'\d+', line)
-            numbers = [int(num) for num in numbers]
-            for num in numbers:
-                allnums.append(num)
+        if('proxy_pass' in line):
+            match = re.search(r':([^:;]+);', line)
+            allnums.append(match.group(1))
+            # numbers = re.findall(r'\d+', line)
+            # numbers = [int(num) for num in numbers]
+            # for num in numbers:
+            #     allnums.append(num)
+    allnums = list(set(allnums))
     return allnums
 if __name__ == "__main__":
     getPortsinUse()
