@@ -21,10 +21,10 @@ export default function Home() {
 
   const fetchUnavailablePorts = async () => {
     try {
-      const response = await fetch('/api/unavailable-ports');
+      const response = await fetch('http://localhost:5000/getPortsinUse');
       const result = await response.json();
-      
       if (result.success) {
+        console.log("Unavailable ports data:", result.data);
         setUnavailablePorts(result.data);
       } else {
         console.error("Failed to fetch ports:", result.error);

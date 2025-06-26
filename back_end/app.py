@@ -1,16 +1,48 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from fastapi import FastAPI, Form, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 from nginxConf import configureNginx, getPortsinUse
-app = Flask(__name__)
-CORS(app)
 
-@app.route('/addSubdomain', methods=['POST'])
-def add_subdomain():
-    subdomain = request.form.get('subdomain')
-    port = request.form.get('port')   
-    
-@app.route('/getPortsinUse', methods=['GET'])
-def get_ports():
-    return getPortsinUse()
+app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with specific origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.post("/addSubdomain")
+async def add_subdomain(subdomain: str = Form(...), port: str = Form(...)):
+    try:
+        print(f"Received subdomain: {subdomain}")
+        print(f"Received port: {port}")
+        
+        configureNginx(subdomain, port)
+        
+        return {
+            "success": True,
+            "message": "Configuration created successfully"
+        }
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/getPortsinUse")
+async def get_ports():
+    try:
+        ports_data = [80, 100, 130] #getPortsinUse()
+         # Convert numbers to objects with port property
+        formatted_ports = [{"port": port} for port in ports_data]
+    # Return in the format your frontend expects
+        return {
+            "success": True,
+            "data": formatted_ports
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
