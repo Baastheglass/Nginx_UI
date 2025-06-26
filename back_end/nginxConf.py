@@ -47,17 +47,6 @@ def configureSitesEnabled(subdomain, port):
     with open("etc/nginx/sites-enabled/default", "a") as f:
         f.write(server_configuration_string)        
 
-def configureNginx(subdomain, port):
-    thread1 = threading.Thread(target=configureSitesEnabled, args=(subdomain, port))
-    thread2 = threading.Thread(target=configureSitesAvailable, args=(subdomain, port))
-
-    # Start threads
-    thread1.start()
-    thread2.start()
-
-    # Wait for both to finish
-    thread1.join()
-    thread2.join()
 
 def getPortsinUse():
     current_dir = os.getcwd()

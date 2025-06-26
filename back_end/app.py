@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from nginxConf import configureNginx, getPortsinUse
+from nginxConf import getPortsinUse, configureSitesAvailable
 
 app = FastAPI()
 
@@ -29,7 +29,7 @@ async def add_subdomain(subdomain: str = Form(...), port: str = Form(...)):
                 "message": f"Port {port} is already in use. Please choose a different port."
             }
         else:
-            configureNginx(subdomain, port)        
+            configureSitesAvailable(subdomain, port)        
             return {
                 "success": True,
                 "message": "Configuration created successfully"
