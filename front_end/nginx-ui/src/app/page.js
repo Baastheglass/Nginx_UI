@@ -21,7 +21,7 @@ export default function Home() {
 
   const fetchUnavailablePorts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/getPortsinUse');
+      const response = await fetch('https://nginxui.axonbuild.com/getPortsinUse');
       const result = await response.json();
       if (result.success) {
         console.log("Unavailable ports data:", result.data);
@@ -56,14 +56,16 @@ export default function Home() {
       const formData = new FormData();
       formData.append('subdomain', subdomain);
       formData.append('port', port);
-      
-      const response = await fetch('http://localhost:5000/addSubdomain', {
+
+      const response = await fetch('https://nginxui.axonbuild.com/addSubdomain', {
         method: 'POST',
         body: formData,
       });
       
+      const result = await response.json();
+      console.log(result);
       // Since your Flask app doesn't return JSON, check if request was successful
-      if (response.ok) {
+      if (response) {
         showMessage('success', 'Nginx configuration created successfully!');
         // Reset form after successful submission
         setSubdomain("");
