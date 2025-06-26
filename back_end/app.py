@@ -14,12 +14,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+used_ports = []
+
 @app.post("/addSubdomain")
 async def add_subdomain(subdomain: str = Form(...), port: str = Form(...)):
     try:
         print(f"Received subdomain: {subdomain}")
         print(f"Received port: {port}")
-        
+        if(port in used_ports):
+            pass
         configureNginx(subdomain, port)
         
         return {
@@ -33,9 +36,10 @@ async def add_subdomain(subdomain: str = Form(...), port: str = Form(...)):
 @app.get("/getPortsinUse")
 async def get_ports():
     try:
-        ports_data = [80, 100, 130] #getPortsinUse()
-         # Convert numbers to objects with port property
-        formatted_ports = [{"port": port} for port in ports_data]
+        used_ports = getPortsinUse()
+        
+        # Convert numbers to objects with port property
+        formatted_ports = [{"port": port} for port in used_ports]
     # Return in the format your frontend expects
         return {
             "success": True,
