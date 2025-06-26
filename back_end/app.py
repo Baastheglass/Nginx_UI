@@ -22,7 +22,10 @@ async def add_subdomain(subdomain: str = Form(...), port: str = Form(...)):
         print(f"Received subdomain: {subdomain}")
         print(f"Received port: {port}")
         if(port in used_ports):
-            pass
+            return {
+                "success": False,
+                "message": f"Port {port} is already in use. Please choose a different port."
+            }
         configureNginx(subdomain, port)
         
         return {
@@ -36,7 +39,7 @@ async def add_subdomain(subdomain: str = Form(...), port: str = Form(...)):
 @app.get("/getPortsinUse")
 async def get_ports():
     try:
-        used_ports = getPortsinUse()
+        used_ports = [69, 420]#getPortsinUse()
         
         # Convert numbers to objects with port property
         formatted_ports = [{"port": port} for port in used_ports]
