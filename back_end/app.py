@@ -66,7 +66,7 @@ async def add_subdomain(username: str = Form(...), password: str = Form(...)):
         print(password)
         print(credentials['password'])
         
-        if(username == credentials['username'] and password == credentials['password']):
+        if(username in credentials['username'] and password in credentials['password'] and list(credentials['username']).index(username) == list(credentials['password']).index(password)):
             return {"success": True}
         else:
             return {"success": False}
@@ -75,5 +75,7 @@ async def add_subdomain(username: str = Form(...), password: str = Form(...)):
         raise HTTPException(status_code=500, detail=str(e))
     
 if __name__ == '__main__':
-    uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
-    
+    #uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
+    with open("credentials.yaml", "r") as f:
+        credentials = yaml.safe_load(f)
+    print(credentials['username'])
