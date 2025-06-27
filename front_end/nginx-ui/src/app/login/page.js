@@ -16,7 +16,7 @@ export default function Login() {
     formData.append("username", document.getElementById("username").value);
     formData.append("password", document.getElementById("password").value);
 
-    const response = await fetch("https://nginxui.axonbuild.com//authenticate", {
+    const response = await fetch("https://nginxui.axonbuild.com/authenticate", {
       method: "POST",
       body: formData
     });
