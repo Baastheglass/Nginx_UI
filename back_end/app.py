@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from nginxConf import getPortsinUse, configureSitesAvailable
 import yaml
+import os
 
 app = FastAPI()
 
@@ -75,7 +76,7 @@ async def add_subdomain(username: str = Form(...), password: str = Form(...)):
         raise HTTPException(status_code=500, detail=str(e))
     
 if __name__ == '__main__':
-    #uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
-    with open("credentials.yaml", "r") as f:
-        credentials = yaml.safe_load(f)
-    print(credentials['username'])
+    uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
+    # with open("credentials.yaml", "r") as f:
+    #     credentials = yaml.safe_load(f)
+    # print(credentials['username'])

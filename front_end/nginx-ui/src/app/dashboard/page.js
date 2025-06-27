@@ -91,9 +91,6 @@ export default function Dashboard() {
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>Nginx Configuration Dashboard</h1>
-        <button onClick={handleLogout} className={styles.logoutButton}>
-          Logout
-        </button>
       </header>
       
       <main className={styles.main}>
