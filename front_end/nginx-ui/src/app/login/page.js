@@ -12,25 +12,33 @@ export default function Login() {
   // Built-in authentication function
   const authenticateUser = async (username, password) => {
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock authentication - replace with your actual auth logic
-    const validCredentials = {
-      username: 'admin',
-      password: 'nginx123'
-    };
-    
-    return username === validCredentials.username && password === validCredentials.password;
+    const formData = new FormData();
+    formData.append("username", document.getElementById("username").value);
+    formData.append("password", document.getElementById("password").value);
+
+    const response = await fetch("http://localhost:5000/authenticate", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+    console.log(data);
+    if (data.success == true) {
+      console.log("Authentication successful");
+      return true;
+    } else {
+      throw new Error('Invalid username or password'); // Notify the caller of invalid credentials
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
+    console.log("In handleSubmit");
     try {
       const isValid = await authenticateUser(credentials.username, credentials.password);
-      
+
       if (isValid) {
         // Store auth token/session
         localStorage.setItem('authToken', 'nginx-ui-token');
@@ -70,7 +78,7 @@ export default function Login() {
               className={styles.input}
             />
           </div>
-          
+
           <div className={styles.inputGroup}>
             <label htmlFor="password">Password</label>
             <input
@@ -86,20 +94,15 @@ export default function Login() {
 
           {error && <div className={styles.error}>{error}</div>}
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
             className={styles.submitButton}
+            onClick={handleSubmit}
           >
             {loading ? 'Authenticating...' : 'Login'}
           </button>
         </form>
-        
-        <div className={styles.credentials}>
-          <p><strong>Demo Credentials:</strong></p>
-          <p>Username: admin</p>
-          <p>Password: nginx123</p>
-        </div>
       </div>
     </div>
   );

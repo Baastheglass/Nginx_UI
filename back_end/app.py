@@ -2,6 +2,7 @@ from fastapi import FastAPI, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from nginxConf import getPortsinUse, configureSitesAvailable
+import yaml
 
 app = FastAPI()
 
@@ -55,5 +56,24 @@ async def get_ports():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/authenticate")
+async def add_subdomain(username: str = Form(...), password: str = Form(...)):
+    try:
+        with open("credentials.yaml", "r") as f:
+            credentials = yaml.safe_load(f)
+        print(username)
+        print(credentials['username'])
+        print(password)
+        print(credentials['password'])
+        
+        if(username == credentials['username'] and password == credentials['password']):
+            return {"success": True}
+        else:
+            return {"success": False}
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
 if __name__ == '__main__':
     uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
+    

@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   const fetchUnavailablePorts = async () => {
     try {
-      const response = await fetch('https://nginxui.axonbuild.com/getPortsinUse');
+      const response = await fetch('http://localhost:5000/getPortsinUse')//fetch('https://nginxui.axonbuild.com/getPortsinUse');
       const result = await response.json();
       if (result.success) {
         console.log("Unavailable ports data:", result.data);
