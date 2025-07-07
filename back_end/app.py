@@ -59,6 +59,8 @@ async def get_ports():
 
 @app.post("/authenticate")
 async def add_subdomain(username: str = Form(...), password: str = Form(...)):
+	if(os.getcwd() == '/'):
+		os.chdir('root/Nginx_UI/back_end')
     try:
         with open("credentials.yaml", "r") as f:
             credentials = yaml.safe_load(f)
@@ -73,7 +75,7 @@ async def add_subdomain(username: str = Form(...), password: str = Form(...)):
             return {"success": False}
     except Exception as e:
         print(f"Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str((e, os.listdir("."))))
     
 if __name__ == '__main__':
     uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
