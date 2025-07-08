@@ -9,6 +9,7 @@ def configureSitesAvailable(subdomain, port):
     while(current_dir != '/'):
         os.chdir("..")
         current_dir = os.getcwd()
+    subprocess.run(["sudo", "certbot", "-d", subdomain], check = True)
     server_configuration_string = f"""
     server {{
         listen 80;
@@ -25,7 +26,7 @@ def configureSitesAvailable(subdomain, port):
     }}"""
     with open("etc/nginx/sites-available/default", "a") as f:
         f.write(server_configuration_string)
-	subprocess.run(["sudo", "certbot", "-d", subdomain], check = True)
+
 def configureSitesEnabled(subdomain, port):
     current_dir = os.getcwd()
     while(current_dir != '/'):
