@@ -9,7 +9,6 @@ def configureSitesAvailable(subdomain, port):
     while(current_dir != '/'):
         os.chdir("..")
         current_dir = os.getcwd()
-    subprocess.run(["sudo", "certbot", "-d", subdomain], check = True)
     server_configuration_string = f"""
     server {{
         listen 80;
