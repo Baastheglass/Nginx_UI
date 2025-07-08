@@ -2,6 +2,7 @@ import os
 import time
 import threading
 import re
+import subprocess
 
 def configureSitesAvailable(subdomain, port):
     current_dir = os.getcwd()
@@ -24,7 +25,7 @@ def configureSitesAvailable(subdomain, port):
     }}"""
     with open("etc/nginx/sites-available/default", "a") as f:
         f.write(server_configuration_string)
-
+	subprocess.run(["sudo", "certbot", "-d", subdomain], check = True)
 def configureSitesEnabled(subdomain, port):
     current_dir = os.getcwd()
     while(current_dir != '/'):

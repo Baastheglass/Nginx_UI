@@ -58,9 +58,9 @@ async def get_ports():
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/authenticate")
-async def add_subdomain(username: str = Form(...), password: str = Form(...)):
-	if(os.getcwd() == '/'):
-		os.chdir('root/Nginx_UI/back_end')
+async def authenticate(username: str = Form(...), password: str = Form(...)):
+    if(os.getcwd() == '/'):
+        os.chdir('root/Nginx_UI/back_end')
     try:
         with open("credentials.yaml", "r") as f:
             credentials = yaml.safe_load(f)
