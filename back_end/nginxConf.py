@@ -35,8 +35,7 @@ server {
     server_name {subdomain};
 
     return 301 https://$host$request_uri;
-}
-        """
+}"""
     with open("etc/nginx/sites-available/default", "a") as f:
         f.write(server_configuration_string)
 
