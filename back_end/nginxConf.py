@@ -10,7 +10,7 @@ def configureSitesAvailable(subdomain, port):
         os.chdir("..")
         current_dir = os.getcwd()
     server_configuration_string = f"""
-    server {
+    server {{
     listen 443 ssl;
     listen [::]:443 ssl;
     server_name {subdomain};
@@ -21,21 +21,22 @@ def configureSitesAvailable(subdomain, port):
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
 
-    location / {
+    location / {{
         proxy_pass http://127.0.0.1:{port};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-server {
+    }}
+}}
+server {{
     listen 80;
     listen [::]:80;
     server_name {subdomain};
 
     return 301 https://$host$request_uri;
-}"""
+}}"""
+
     with open("etc/nginx/sites-available/default", "a") as f:
         f.write(server_configuration_string)
 
@@ -46,18 +47,32 @@ def configureSitesEnabled(subdomain, port):
         current_dir = os.getcwd()
     server_configuration_string = f"""
     server {{
-        listen 80;
-        listen [::]:80;
-        server_name {subdomain};
-        
-        location / {{
-            proxy_pass http://127.0.0.1:{port};
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }}
-    }}"""
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name {subdomain};
+
+    ssl_certificate /etc/letsencrypt/live/axonbuild.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/axonbuild.com/privkey.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    location / {{
+        proxy_pass http://127.0.0.1:{port};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }}
+}}
+server {{
+    listen 80;
+    listen [::]:80;
+    server_name {subdomain};
+
+    return 301 https://$host$request_uri;
+}}"""
+
     with open("etc/nginx/sites-enabled/default", "a") as f:
         f.write(server_configuration_string)        
 
